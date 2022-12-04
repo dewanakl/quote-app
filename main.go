@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"quoteapp/controller"
 	"quoteapp/db"
-	"quoteapp/repository"
+	"quoteapp/model"
 	"quoteapp/routes"
 )
 
@@ -21,8 +21,8 @@ func main() {
 	db.Migrate()
 	conn := db.DB()
 
-	repository := repository.NewQuoteRepository(conn)
-	controller := controller.NewQuoteController(repository)
+	model := model.NewQuoteModel(conn)
+	controller := controller.NewQuoteController(model)
 
 	router := routes.NewRoute(controller)
 

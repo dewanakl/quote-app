@@ -1,4 +1,4 @@
-package model
+package db
 
 import "gorm.io/gorm"
 
@@ -7,9 +7,4 @@ type Quotes struct {
 	Char  string `json:"character"`
 	Quote string `json:"quote"`
 	gorm.Model
-}
-
-type Response struct {
-	Data  any `json:"data"`
-	Error any `json:"error"`
 }

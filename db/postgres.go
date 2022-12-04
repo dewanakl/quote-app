@@ -2,7 +2,6 @@ package db
 
 import (
 	"fmt"
-	"quoteapp/model"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -23,7 +22,7 @@ func NewDB(host, username, password, database string, port int) *Postgres {
 }
 
 func (p *Postgres) Migrate() {
-	p.g.AutoMigrate(&model.Quotes{})
+	p.g.AutoMigrate(&Quotes{})
 }
 
 func (p *Postgres) DB() *gorm.DB {
