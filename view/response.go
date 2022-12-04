@@ -10,8 +10,12 @@ type Response struct {
 	Error any `json:"error"`
 }
 
-func ErrorRespond(w http.ResponseWriter, err error) {
+func AnyErrorRespond(w http.ResponseWriter, code int, err error) {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusInternalServerError)
+	w.WriteHeader(code)
 	json.NewEncoder(w).Encode(Response{Error: err.Error()})
+}
+
+func ErrorRespond(w http.ResponseWriter, err error) {
+	AnyErrorRespond(w, http.StatusInternalServerError, err)
 }

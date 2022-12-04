@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"encoding/json"
+	"errors"
 	"net/http"
 	"quoteapp/view"
 )
@@ -11,9 +11,7 @@ func (r *Route) get(next http.Handler) http.Handler {
 		if r.Method == http.MethodGet {
 			next.ServeHTTP(w, r)
 		} else {
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			json.NewEncoder(w).Encode(view.Response{Error: "Method is not allowed!"})
+			view.AnyErrorRespond(w, http.StatusMethodNotAllowed, errors.New("method is not allowed"))
 		}
 	})
 }
@@ -23,9 +21,7 @@ func (r *Route) post(next http.Handler) http.Handler {
 		if r.Method == http.MethodPost {
 			next.ServeHTTP(w, r)
 		} else {
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			json.NewEncoder(w).Encode(view.Response{Error: "Method is not allowed!"})
+			view.AnyErrorRespond(w, http.StatusMethodNotAllowed, errors.New("method is not allowed"))
 		}
 	})
 }

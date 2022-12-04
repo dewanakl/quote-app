@@ -61,7 +61,7 @@ func (q *Quote) Show(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]string)
 	data["anime"] = quote.Anime
-	data["character"] = quote.Char
+	data["character"] = quote.Character
 	data["quote"] = quote.Quote
 
 	w.Header().Set("Content-Type", "application/json")

@@ -3,8 +3,8 @@ package db
 import "gorm.io/gorm"
 
 type Quotes struct {
-	Anime string `json:"anime"`
-	Char  string `json:"character"`
-	Quote string `json:"quote"`
+	Anime     string `json:"anime"`
+	Character string `json:"character"`
+	Quote     string `json:"quote"`
 	gorm.Model
 }
