@@ -43,8 +43,9 @@ func (q *Quote) Fetch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := make(map[string]bool)
-	data["fetch"] = true
+	data := map[string]bool{
+		"fetch": true,
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -75,8 +76,9 @@ func (q *Quote) Count(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := make(map[string]int64)
-	data["count"] = count
+	data := map[string]int64{
+		"count": count,
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -84,7 +86,30 @@ func (q *Quote) Count(w http.ResponseWriter, r *http.Request) {
 }
 
 func (q *Quote) Store(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		view.ErrorRespond(w, err)
+		return
+	}
+
+	quote := db.Quotes{}
+	err = json.Unmarshal(body, &quote)
+	if err != nil {
+		view.ErrorRespond(w, err)
+		return
+	}
+
+	err = q.quote.Create(&quote)
+	if err != nil {
+		view.ErrorRespond(w, err)
+		return
+	}
+
+	data := map[string]bool{
+		"add": true,
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(view.Response{Data: "Store Quote"})
+	json.NewEncoder(w).Encode(view.Response{Data: data})
 }
