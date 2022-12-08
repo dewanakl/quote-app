@@ -20,26 +20,26 @@ func NewQuoteController(q *model.Quote) *Quote {
 func (q *Quote) Fetch(w http.ResponseWriter, r *http.Request) {
 	resp, err := http.Get("https://animechan.vercel.app/api/quotes")
 	if err != nil {
-		view.ErrorRespond(w, err)
+		view.ErrorRespond(w, http.StatusInternalServerError, err)
 		return
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		view.ErrorRespond(w, err)
+		view.ErrorRespond(w, http.StatusInternalServerError, err)
 		return
 	}
 
 	quote := []db.Quotes{}
 	err = json.Unmarshal(body, &quote)
 	if err != nil {
-		view.ErrorRespond(w, err)
+		view.ErrorRespond(w, http.StatusInternalServerError, err)
 		return
 	}
 
 	err = q.quote.Create(&quote)
 	if err != nil {
-		view.ErrorRespond(w, err)
+		view.ErrorRespond(w, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -47,15 +47,13 @@ func (q *Quote) Fetch(w http.ResponseWriter, r *http.Request) {
 		"fetch": true,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(view.Response{Data: data})
+	view.SuccessRespond(w, data)
 }
 
 func (q *Quote) Show(w http.ResponseWriter, r *http.Request) {
 	quote, err := q.quote.Get()
 	if err != nil {
-		view.ErrorRespond(w, err)
+		view.ErrorRespond(w, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -64,15 +62,13 @@ func (q *Quote) Show(w http.ResponseWriter, r *http.Request) {
 	data["character"] = quote.Character
 	data["quote"] = quote.Quote
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(view.Response{Data: data})
+	view.SuccessRespond(w, data)
 }
 
 func (q *Quote) Count(w http.ResponseWriter, r *http.Request) {
 	count, err := q.quote.Count()
 	if err != nil {
-		view.ErrorRespond(w, err)
+		view.ErrorRespond(w, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -80,28 +76,26 @@ func (q *Quote) Count(w http.ResponseWriter, r *http.Request) {
 		"count": count,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(view.Response{Data: data})
+	view.SuccessRespond(w, data)
 }
 
 func (q *Quote) Store(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		view.ErrorRespond(w, err)
+		view.ErrorRespond(w, http.StatusInternalServerError, err)
 		return
 	}
 
 	quote := db.Quotes{}
 	err = json.Unmarshal(body, &quote)
 	if err != nil {
-		view.ErrorRespond(w, err)
+		view.ErrorRespond(w, http.StatusInternalServerError, err)
 		return
 	}
 
 	err = q.quote.Create(&quote)
 	if err != nil {
-		view.ErrorRespond(w, err)
+		view.ErrorRespond(w, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -109,7 +103,5 @@ func (q *Quote) Store(w http.ResponseWriter, r *http.Request) {
 		"add": true,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(view.Response{Data: data})
+	view.SuccessRespond(w, data)
 }
