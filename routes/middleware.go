@@ -11,7 +11,7 @@ func (r *Route) get(next http.Handler) http.Handler {
 		if r.Method == http.MethodGet {
 			next.ServeHTTP(w, r)
 		} else {
-			view.ErrorRespond(w, http.StatusMethodNotAllowed, errors.New("method is not allowed"))
+			view.Respond(w, http.StatusMethodNotAllowed, nil, errors.New("method is not allowed"))
 		}
 	})
 }
@@ -21,7 +21,7 @@ func (r *Route) post(next http.Handler) http.Handler {
 		if r.Method == http.MethodPost {
 			next.ServeHTTP(w, r)
 		} else {
-			view.ErrorRespond(w, http.StatusMethodNotAllowed, errors.New("method is not allowed"))
+			view.Respond(w, http.StatusMethodNotAllowed, nil, errors.New("method is not allowed"))
 		}
 	})
 }

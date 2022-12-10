@@ -20,26 +20,26 @@ func NewQuoteController(q *model.Quote) *Quote {
 func (q *Quote) Fetch(w http.ResponseWriter, r *http.Request) {
 	resp, err := http.Get("https://animechan.vercel.app/api/quotes")
 	if err != nil {
-		view.ErrorRespond(w, http.StatusInternalServerError, err)
+		view.Respond(w, http.StatusInternalServerError, nil, err)
 		return
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		view.ErrorRespond(w, http.StatusInternalServerError, err)
+		view.Respond(w, http.StatusInternalServerError, nil, err)
 		return
 	}
 
 	quote := []db.Quotes{}
 	err = json.Unmarshal(body, &quote)
 	if err != nil {
-		view.ErrorRespond(w, http.StatusInternalServerError, err)
+		view.Respond(w, http.StatusInternalServerError, nil, err)
 		return
 	}
 
 	err = q.quote.Create(&quote)
 	if err != nil {
-		view.ErrorRespond(w, http.StatusInternalServerError, err)
+		view.Respond(w, http.StatusInternalServerError, nil, err)
 		return
 	}
 
@@ -47,13 +47,13 @@ func (q *Quote) Fetch(w http.ResponseWriter, r *http.Request) {
 		"fetch": true,
 	}
 
-	view.SuccessRespond(w, data)
+	view.Respond(w, http.StatusCreated, data, nil)
 }
 
 func (q *Quote) Show(w http.ResponseWriter, r *http.Request) {
 	quote, err := q.quote.Get()
 	if err != nil {
-		view.ErrorRespond(w, http.StatusInternalServerError, err)
+		view.Respond(w, http.StatusInternalServerError, nil, err)
 		return
 	}
 
@@ -62,13 +62,13 @@ func (q *Quote) Show(w http.ResponseWriter, r *http.Request) {
 	data["character"] = quote.Character
 	data["quote"] = quote.Quote
 
-	view.SuccessRespond(w, data)
+	view.Respond(w, http.StatusOK, data, nil)
 }
 
 func (q *Quote) Count(w http.ResponseWriter, r *http.Request) {
 	count, err := q.quote.Count()
 	if err != nil {
-		view.ErrorRespond(w, http.StatusInternalServerError, err)
+		view.Respond(w, http.StatusInternalServerError, nil, err)
 		return
 	}
 
@@ -76,26 +76,26 @@ func (q *Quote) Count(w http.ResponseWriter, r *http.Request) {
 		"count": count,
 	}
 
-	view.SuccessRespond(w, data)
+	view.Respond(w, http.StatusOK, data, nil)
 }
 
 func (q *Quote) Store(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		view.ErrorRespond(w, http.StatusInternalServerError, err)
+		view.Respond(w, http.StatusInternalServerError, nil, err)
 		return
 	}
 
 	quote := db.Quotes{}
 	err = json.Unmarshal(body, &quote)
 	if err != nil {
-		view.ErrorRespond(w, http.StatusInternalServerError, err)
+		view.Respond(w, http.StatusInternalServerError, nil, err)
 		return
 	}
 
 	err = q.quote.Create(&quote)
 	if err != nil {
-		view.ErrorRespond(w, http.StatusInternalServerError, err)
+		view.Respond(w, http.StatusInternalServerError, nil, err)
 		return
 	}
 
@@ -103,5 +103,5 @@ func (q *Quote) Store(w http.ResponseWriter, r *http.Request) {
 		"add": true,
 	}
 
-	view.SuccessRespond(w, data)
+	view.Respond(w, http.StatusCreated, data, nil)
 }

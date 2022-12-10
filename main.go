@@ -21,11 +21,11 @@ func main() {
 	db.Migrate()
 	conn := db.DB()
 
-	model := model.NewQuoteModel(conn)
-	controller := controller.NewQuoteController(model)
+	quotemodel := model.NewQuoteModel(conn)
+	quotecontroller := controller.NewQuoteController(quotemodel)
 
-	router := routes.NewRoute(controller)
+	router := routes.NewRoute(quotecontroller)
 
 	fmt.Println("starting api server at http://localhost:8080")
-	http.ListenAndServe(":8080", router.Run())
+	panic(http.ListenAndServe(":8080", router.Run()))
 }

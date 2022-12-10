@@ -6,20 +6,18 @@ import (
 )
 
 type Response struct {
+	Code  int         `json:"code"`
 	Data  interface{} `json:"data"`
 	Error interface{} `json:"error"`
 }
 
-func respond(w http.ResponseWriter, code int, data Response) {
+func Respond(w http.ResponseWriter, code int, data interface{}, err error) {
+	respond := Response{Code: code, Data: data, Error: nil}
+	if err != nil {
+		respond.Error = err.Error()
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(data)
-}
-
-func SuccessRespond(w http.ResponseWriter, data interface{}) {
-	respond(w, http.StatusOK, Response{Data: data})
-}
-
-func ErrorRespond(w http.ResponseWriter, code int, err error) {
-	respond(w, code, Response{Error: err.Error()})
+	json.NewEncoder(w).Encode(respond)
 }
