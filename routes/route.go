@@ -1,32 +1,32 @@
 package routes
 
 import (
-	"net/http"
 	"quoteapp/controller"
+	"quoteapp/model"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type Route struct {
-	mux   *http.ServeMux
+	g     *gin.Engine
 	quote *controller.Quote
 }
 
-func NewRoute(q *controller.Quote) *Route {
+func NewRoute(db *gorm.DB, gi *gin.Engine) *gin.Engine {
 	route := &Route{
-		mux:   http.NewServeMux(),
-		quote: q,
+		g: gi,
 	}
 
-	route.routes()
-	return route
-}
+	route.quote = controller.NewQuoteController(model.NewQuoteModel(db))
 
-func (r *Route) Run() *http.ServeMux {
-	return r.mux
+	route.routes()
+	return gi
 }
 
 func (r *Route) routes() {
-	r.mux.Handle("/fetch", r.get(http.HandlerFunc(r.quote.Fetch)))
-	r.mux.Handle("/select", r.get(http.HandlerFunc(r.quote.Show)))
-	r.mux.Handle("/count", r.get(http.HandlerFunc(r.quote.Count)))
-	r.mux.Handle("/add", r.post(http.HandlerFunc(r.quote.Store)))
+	r.g.GET("/fetch", r.quote.Fetch)
+	r.g.GET("/select", r.quote.Show)
+	r.g.GET("/count", r.quote.Count)
+	r.g.POST("/add", r.quote.Store)
 }
